@@ -13,8 +13,8 @@ type UserHandler struct {
 	Service usecases.UserUsecase
 }
 
-// Create inserts the new data
-func (handler UserHandler) Create(w http.ResponseWriter, r *http.Request) {
+// Register inserts the new user
+func (handler UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var user entities.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -27,9 +27,12 @@ func (handler UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	user.ID = id
+
 	response := make(map[string]interface{})
 	response["data"] = user
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
 }

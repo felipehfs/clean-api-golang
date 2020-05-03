@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+
 	_ "github.com/lib/pq"
 )
 
@@ -20,12 +21,11 @@ var conn *sql.DB
 // GetPostgresInstance instantiates the database
 func GetPostgresInstance() (*sql.DB, error) {
 	if conn == nil {
-		uri := fmt.Sprintf("host=%v port=%v user=%v" +
+		uri := fmt.Sprintf("host=%v port=%v user=%v"+
 			"password=%v dbname=%v sslmode=disable",
-			host, port, user, password, database
-		)
+			host, port, user, password, database)
 
-		db err := sql.Open("postgres", uri)
+		db, err := sql.Open("postgres", uri)
 		if err != nil {
 			return nil, err
 		}

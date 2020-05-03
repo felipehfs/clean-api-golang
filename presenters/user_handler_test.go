@@ -1,19 +1,30 @@
 package presenters_test
 
 import (
-	"io"
+	"bytes"
+	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+
+	"github.com/felipehfs/clean-api/presenters"
+	"github.com/felipehfs/clean-api/repositories/mock"
+	"github.com/felipehfs/clean-api/usecases"
 )
+
+var mockedRepository *mock.MockedUserRepository
+var userService *usecases.UserService
+var userHandler *presenters.UserHandler
 
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
 	tearDown()
+	os.Exit(code)
 }
 
 func TestCreateUserHandler(t *testing.T) {
-	tt := []struct {
+	tableTest := []struct {
 		Description    string
 		Body           []byte
 		ExpectedStatus int
@@ -29,15 +40,31 @@ func TestCreateUserHandler(t *testing.T) {
 				}
 			`),
 			ExpectedStatus: http.StatusCreated,
-		}
+		},
 	}
 
-	rec := httptest.NewRecorder()
-	res := httptest.NewRequest()
+	for _, test := range tableTest {
+		rec := httptest.NewRecorder()
+		res := httptest.NewRequest("POST", "/register", bytes.NewReader(test.Body))
+		userHandler.Register(rec, res)
+
+		response := rec.Result()
+		if response.StatusCode != test.ExpectedStatus {
+			t.Errorf("Expected status code %v but got the code %v", response.StatusCode, test.ExpectedStatus)
+		}
+	}
 }
 
 func setup() {
+	mockedRepository = new(mock.MockedUserRepository)
 
+	userService = &usecases.UserService{
+		Repository: mockedRepository,
+	}
+
+	userHandler = &presenters.UserHandler{
+		Service: userService,
+	}
 }
 
 func tearDown() {
