@@ -31,5 +31,6 @@ func (s Server) Run(port string) {
 	}
 
 	s.Router.HandleFunc("/api/register", userHandler.Register).Methods("POST")
+	s.Router.HandleFunc("/api/login", userHandler.Login).Methods("POST")
 	http.ListenAndServe(port, s.Router)
 }

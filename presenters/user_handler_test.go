@@ -55,6 +55,36 @@ func TestCreateUserHandler(t *testing.T) {
 	}
 }
 
+func TestLoginUserHandler(t *testing.T) {
+	tableTest := []struct {
+		Description    string
+		Body           []byte
+		ExpectedStatus int
+	}{
+		{
+			Description: "Should login successfully",
+			Body: []byte(`
+				{
+					"email": "alreadyexists@example.com",
+					"password": "1234"
+				}
+			`),
+			ExpectedStatus: http.StatusOK,
+		},
+	}
+
+	for _, test := range tableTest {
+		rec := httptest.NewRecorder()
+		res := httptest.NewRequest("POST", "/login", bytes.NewReader(test.Body))
+		userHandler.Login(rec, res)
+
+		response := rec.Result()
+		if response.StatusCode != test.ExpectedStatus {
+			t.Errorf("Expected status code %v but got the code %v", response.StatusCode, test.ExpectedStatus)
+		}
+	}
+}
+
 func setup() {
 	mockedRepository = new(mock.MockedUserRepository)
 
