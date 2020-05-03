@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"database/sql"
 	"errors"
 
 	"github.com/felipehfs/clean-api/entities"
@@ -32,7 +33,7 @@ func (service UserService) Create(user *entities.User) (int64, error) {
 	}
 
 	userFounded, err := service.Repository.SearchEmail(user.Email)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return -1, err
 	}
 

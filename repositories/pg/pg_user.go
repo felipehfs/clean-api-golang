@@ -28,7 +28,7 @@ func (repo UserRepository) SearchEmail(email string) (*entities.User, error) {
 		"password FROM users WHERE email=$1"
 
 	var result entities.User
-	err := repo.DB.QueryRow(sql).
+	err := repo.DB.QueryRow(sql, email).
 		Scan(&result.ID, &result.FirstName,
 			&result.LastName, &result.Email,
 			&result.Password)
