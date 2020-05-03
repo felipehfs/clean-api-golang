@@ -13,6 +13,9 @@ import (
 var mockedRepository *mock.MockedUserRepository
 var userService *usecases.UserService
 
+var mockedBookRepository *mock.MockedBookRepository
+var bookService *usecases.BookService
+
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
@@ -25,6 +28,12 @@ func setup() {
 	mockedRepository = new(mock.MockedUserRepository)
 	userService = &usecases.UserService{
 		Repository: mockedRepository,
+	}
+
+	// Inicializando o que precisa para os testes do livro
+	mockedBookRepository = new(mock.MockedBookRepository)
+	bookService = &usecases.BookService{
+		Repository: mockedBookRepository,
 	}
 }
 

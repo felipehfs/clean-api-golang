@@ -12,7 +12,7 @@ type MockedUserRepository struct {
 }
 
 // Create inserts a new user
-func (m MockedUserRepository) Create(*entities.User) (int64, error) {
+func (m MockedUserRepository) Create(user *entities.User) (int64, error) {
 	result, ok := m.Expectation["Create"]
 	if ok {
 		id, _ := result.(int64)
