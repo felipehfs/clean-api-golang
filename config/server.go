@@ -30,7 +30,16 @@ func (s Server) Run(port string) {
 		Service: userUsecase,
 	}
 
+	bookRepository := pg.BookRepository{
+		DB: s.DB,
+	}
+
+	bookHandler := presenters.NewBookHandler(bookRepository)
+
 	s.Router.HandleFunc("/api/register", userHandler.Register).Methods("POST")
 	s.Router.HandleFunc("/api/login", userHandler.Login).Methods("POST")
+
+	s.Router.HandleFunc("/api/books", bookHandler.Create).Methods("POST")
+	s.Router.HandleFunc("/api/books", bookHandler.Get).Methods("GET")
 	http.ListenAndServe(port, s.Router)
 }

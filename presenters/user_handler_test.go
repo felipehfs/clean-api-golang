@@ -16,6 +16,9 @@ var mockedRepository *mock.MockedUserRepository
 var userService *usecases.UserService
 var userHandler *presenters.UserHandler
 
+var mockedBookRepository *mock.MockedBookRepository
+var bookHandler *presenters.BookHandler
+
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
@@ -87,6 +90,7 @@ func TestLoginUserHandler(t *testing.T) {
 
 func setup() {
 	mockedRepository = new(mock.MockedUserRepository)
+	mockedBookRepository = new(mock.MockedBookRepository)
 
 	userService = &usecases.UserService{
 		Repository: mockedRepository,
@@ -95,6 +99,8 @@ func setup() {
 	userHandler = &presenters.UserHandler{
 		Service: userService,
 	}
+
+	bookHandler = presenters.NewBookHandler(mockedBookRepository)
 }
 
 func tearDown() {
