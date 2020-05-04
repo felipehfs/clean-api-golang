@@ -13,14 +13,15 @@ type BookRepository struct {
 
 // Create inserts a new book
 func (repo BookRepository) Create(book *entities.Book) (int64, error) {
-	sql := "INSERT INTO books (name, isbn, price) VALUES ($1, $2, $3)"
+	sql := "INSERT INTO books (name, isbn, price) VALUES ($1, $2, $3) RETURNING id"
 
-	res, err := repo.DB.Exec(sql, book.Name, book.ISBN, book.Price)
+	var id int64
+	err := repo.DB.QueryRow(sql, book.Name, book.ISBN, book.Price).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
 
-	return res.LastInsertId()
+	return id, nil
 }
 
 // Get retrieves all books

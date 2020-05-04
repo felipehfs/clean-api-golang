@@ -69,9 +69,11 @@ func TestShouldCreateUser(t *testing.T) {
 	user.FirstName = "Felipe"
 	user.LastName = "Henrique"
 
-	mock.ExpectExec("^INSERT INTO users").
+	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
+
+	mock.ExpectQuery("^INSERT INTO users").
 		WithArgs(user.FirstName, user.LastName, user.Email, user.Password).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+		WillReturnRows(rows)
 
 	_, err = repo.Create(user)
 

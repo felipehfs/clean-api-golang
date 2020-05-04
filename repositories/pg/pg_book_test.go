@@ -25,9 +25,11 @@ func TestCreateBook(t *testing.T) {
 		DB: db,
 	}
 
-	mock.ExpectExec("^INSERT INTO book").
+	rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
+
+	mock.ExpectQuery("^INSERT INTO book").
 		WithArgs(book.Name, book.ISBN, book.Price).
-		WillReturnResult(sqlmock.NewResult(1, 1))
+		WillReturnRows(rows)
 
 	_, err = repo.Create(book)
 	if err != nil {

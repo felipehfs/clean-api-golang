@@ -13,13 +13,14 @@ type UserRepository struct {
 
 // Create inserts the new data into database
 func (repo UserRepository) Create(user *entities.User) (int64, error) {
-	sql := `INSERT INTO users (firstname, lastname, email, password) VALUES ($1, $2, $3, $4)`
-	res, err := repo.DB.Exec(sql, user.FirstName, user.LastName, user.Email, user.Password)
+	sql := `INSERT INTO users (firstname, lastname, email, password) VALUES ($1, $2, $3, $4) RETURNING id`
+	var id int64
+	err := repo.DB.QueryRow(sql, user.FirstName, user.LastName, user.Email, user.Password).Scan(&id)
 	if err != nil {
 		return -1, err
 	}
 
-	return res.LastInsertId()
+	return id, nil
 }
 
 // SearchEmail returns the user by email
