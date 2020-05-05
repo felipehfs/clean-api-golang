@@ -16,3 +16,8 @@ func (m MockedBookRepository) Create(book *entities.Book) (int64, error) {
 func (m MockedBookRepository) Get() ([]entities.Book, error) {
 	return []entities.Book{}, nil
 }
+
+// Update changes the book
+func (m MockedBookRepository) Update(book *entities.Book) error {
+	return nil
+}

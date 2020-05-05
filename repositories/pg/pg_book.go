@@ -24,6 +24,17 @@ func (repo BookRepository) Create(book *entities.Book) (int64, error) {
 	return id, nil
 }
 
+// Update changes the book
+func (repo BookRepository) Update(book *entities.Book) error {
+	sql := `UPDATE books SET name=$2, isbn=$3, price=$4 WHERE id=$1`
+	_, err := repo.DB.Exec(sql, book.ID, book.Name, book.ISBN, book.Price)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Get retrieves all books
 func (repo BookRepository) Get() ([]entities.Book, error) {
 	sql := "SELECT id, name, isbn, price FROM books"

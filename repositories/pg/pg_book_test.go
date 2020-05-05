@@ -41,6 +41,40 @@ func TestCreateBook(t *testing.T) {
 	}
 }
 
+func TestUpdateBook(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Error(err)
+	}
+	defer db.Close()
+
+	repo := pg.BookRepository{
+		DB: db,
+	}
+
+	changedBook := &entities.Book{
+		ID:    1,
+		Name:  "Pequeno Príncipe (updated)",
+		ISBN:  "RIESXS-EIEIEJFM-AXXDDF",
+		Price: 45.60,
+	}
+
+	mock.ExpectExec("^UPDATE books").
+		WithArgs(changedBook.ID,
+			changedBook.Name, changedBook.ISBN,
+			changedBook.Price).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	err = repo.Update(changedBook)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestGetBook(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
