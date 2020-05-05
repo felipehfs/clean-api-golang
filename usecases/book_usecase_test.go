@@ -35,8 +35,15 @@ func TestShouldUpdateBook(t *testing.T) {
 	}
 }
 
-func TestShouldGetUser(t *testing.T) {
+func TestShouldGetBook(t *testing.T) {
 	_, err := bookService.Get()
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestShouldRemoveBook(t *testing.T) {
+	err := bookService.Remove(1)
 	if err != nil {
 		t.Error(err)
 	}

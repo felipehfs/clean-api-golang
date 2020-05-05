@@ -59,3 +59,14 @@ func (repo BookRepository) Get() ([]entities.Book, error) {
 
 	return books, nil
 }
+
+// Remove a book
+func (repo BookRepository) Remove(id int64) error {
+	sql := "DELETE FROM books WHERE id=$1"
+	_, err := repo.DB.Exec(sql, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

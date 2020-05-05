@@ -51,3 +51,8 @@ func (bs BookService) Update(book *entities.Book) error {
 
 	return bs.Repository.Update(book)
 }
+
+// Remove a book
+func (bs BookService) Remove(id int64) error {
+	return bs.Repository.Remove(id)
+}

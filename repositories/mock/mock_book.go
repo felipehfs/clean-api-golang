@@ -21,3 +21,8 @@ func (m MockedBookRepository) Get() ([]entities.Book, error) {
 func (m MockedBookRepository) Update(book *entities.Book) error {
 	return nil
 }
+
+// Remove a book
+func (m MockedBookRepository) Remove(id int64) error {
+	return nil
+}

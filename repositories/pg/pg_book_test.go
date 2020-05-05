@@ -75,6 +75,31 @@ func TestUpdateBook(t *testing.T) {
 	}
 }
 
+func TestRemoveBook(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Error(err)
+	}
+
+	defer db.Close()
+
+	repo := pg.BookRepository{
+		DB: db,
+	}
+
+	mock.ExpectExec("^DELETE FROM books").
+		WithArgs(1).
+		WillReturnResult(sqlmock.NewResult(0, 1))
+
+	if err := repo.Remove(1); err != nil {
+		t.Error(err)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestGetBook(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {

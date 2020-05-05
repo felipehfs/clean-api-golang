@@ -58,6 +58,24 @@ func (b BookHandler) Get(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+// Remove a book
+func (b BookHandler) Remove(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.ParseInt(vars["id"], 10, 64)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = b.Service.Remove(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // Update is a controllers to change a book
 func (b BookHandler) Update(w http.ResponseWriter, r *http.Request) {
 	var newBook entities.Book

@@ -13,4 +13,5 @@ type BookUsecase interface {
 	Create(*entities.Book) (int64, error)
 	Get() ([]entities.Book, error)
 	Update(*entities.Book) error
+	Remove(int64) error
 }

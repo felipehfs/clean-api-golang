@@ -42,6 +42,7 @@ func (s Server) Run(port string) {
 	s.Router.HandleFunc("/api/books", bookHandler.Create).Methods("POST")
 	s.Router.HandleFunc("/api/books", bookHandler.Get).Methods("GET")
 	s.Router.HandleFunc("/api/books/{id}", bookHandler.Update).Methods("PUT")
+	s.Router.HandleFunc("/api/books/{id}", bookHandler.Remove).Methods("DELETE")
 
 	http.ListenAndServe(port, s.Router)
 }
