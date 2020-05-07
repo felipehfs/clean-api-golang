@@ -3,6 +3,7 @@ package config
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -47,6 +48,16 @@ func verifyToken(r *http.Request) (*jwt.Token, error) {
 	return token, nil
 }
 
+// Middleware decorates the handler
+type Middleware func(http.HandlerFunc) http.HandlerFunc
+
+func hasLogger(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.Host + r.URL.Path)
+		handler(w, r)
+	}
+}
+
 func hasAuth(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("authorization") != "" {
@@ -67,6 +78,15 @@ func hasAuth(handler http.HandlerFunc) http.HandlerFunc {
 			fmt.Fprintln(w, "Not authorized")
 		}
 	}
+}
+
+func decorate(handler http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+
+	for _, middleware := range middlewares {
+		handler = middleware(handler)
+	}
+
+	return handler
 }
 
 // Run initializes the server and the port
@@ -92,6 +112,9 @@ func (s Server) Run(port string) {
 	s.Router.HandleFunc("/api/register", userHandler.Register).Methods("POST")
 	s.Router.HandleFunc("/api/login", userHandler.Login).Methods("POST")
 
+	routeDecorated := decorate(bookHandler.Get, hasAuth, hasLogger)
+
+	s.Router.HandleFunc("/api/books/protected", routeDecorated).Methods("GET")
 	s.Router.HandleFunc("/api/books", bookHandler.Create).Methods("POST")
 	s.Router.HandleFunc("/api/books", bookHandler.Get).Methods("GET")
 	s.Router.HandleFunc("/api/books/{id}", hasAuth(bookHandler.Update)).Methods("PUT")
