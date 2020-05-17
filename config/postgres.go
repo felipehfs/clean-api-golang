@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	// driver do postresql
 	_ "github.com/lib/pq"
 )
 

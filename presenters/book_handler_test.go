@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gorilla/mux"
 )
 
 func TestShouldCreateBook(t *testing.T) {
@@ -70,5 +72,36 @@ func TestShouldGetBook(t *testing.T) {
 					testcase.ExpectedStatus, response.StatusCode)
 			}
 		})
+	}
+}
+
+func TestShouldUpdateBook(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest("PUT", "/books", bytes.NewReader([]byte(`
+		{
+			"name": "Pequeno Príncipe",
+			"price": 13.90,
+			"isbn": "EOREQO-VMVMVSOS-QWEOWEIE"
+		}
+	`)))
+
+	req = mux.SetURLVars(req, map[string]string{"id": "1"})
+
+	bookHandler.Update(rec, req)
+	response := rec.Result()
+	if response.StatusCode != http.StatusCreated {
+		t.Errorf("Expected status code %v but found %v", http.StatusNoContent, response.StatusCode)
+	}
+}
+
+func TestShouldRemoveBook(t *testing.T) {
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest("DELETE", "/books", nil)
+	req = mux.SetURLVars(req, map[string]string{"id": "1"})
+
+	bookHandler.Remove(rec, req)
+	response := rec.Result()
+	if response.StatusCode != http.StatusNoContent {
+		t.Errorf("Expected status code %v but found %v", http.StatusNoContent, response.StatusCode)
 	}
 }
